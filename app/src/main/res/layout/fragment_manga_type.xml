@@ -5,9 +5,18 @@
     android:layout_height="match_parent"
     tools:context="fragment.MangaTypeFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:orientation="vertical">
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/genre_spinner"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/manga_type_recycler_view"/>
+    </LinearLayout>
 
 </FrameLayout>
