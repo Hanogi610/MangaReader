@@ -60,4 +60,7 @@ dependencies {
     implementation (libs.kotlinx.coroutines.core)
     implementation (libs.kotlinx.coroutines.android)
 
+    //glide
+    implementation (libs.glide)
+
 }

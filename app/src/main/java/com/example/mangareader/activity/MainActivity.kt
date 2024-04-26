@@ -2,6 +2,7 @@ package com.example.mangareader.activity
 
 import adapter.MainBottomNavigationViewPagerAdapter
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -13,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import model.HomepageManga
 import scraper.NettruyenJsoup
 
 class MainActivity : AppCompatActivity() {
@@ -54,6 +56,5 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        GlobalScope.launch { Dispatchers.Main.run { NettruyenJsoup().getHomepage() }}
     }
 }

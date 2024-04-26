@@ -3,13 +3,21 @@ package fragment
 import adapter.HomeChildFragmentRvAdapter
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import model.HomepageManga
+import scraper.NettruyenJsoup
 
 class LatestMangaFragment : Fragment() {
 
@@ -38,30 +46,29 @@ class LatestMangaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        println("LatestMangaFragment.onViewCreated()")
         recyclerView = view.findViewById(R.id.rv_latest_manga)
-        var mangaList = createDummyData()
-        val adapter = HomeChildFragmentRvAdapter(mangaList)
-        recyclerView.adapter = adapter
-    }
+        recyclerView.layoutManager = GridLayoutManager(context, 4)
 
-    fun createDummyData(): List<HomepageManga> {
-        val dummyData = mutableListOf<HomepageManga>()
+        viewModel.mangaList.observe(viewLifecycleOwner, Observer { mangas ->
+            val adapter = HomeChildFragmentRvAdapter(mangas)
+            recyclerView.adapter = adapter
+        })
 
-        for (i in 1..10) {
-            val manga = HomepageManga()
-            manga.title = "Manga Title $i"
-            manga.latestChapter = "Chapter $i"
-            manga.imageUrl = "https://example.com/image_$i.jpg"
-            manga.url = "https://example.com/manga_$i"
-            manga.viewcount = "Views: ${i * 100}"
-            manga.commentcount = "Comments: ${i * 10}"
-            manga.favcount = "Favorites: ${i * 5}"
+//        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+//                val totalItemCount = layoutManager.itemCount
+//                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+//
+//                if (totalItemCount -1 == lastVisibleItem) {
+//                    viewModel.fetchLatestMangas()
+//                }
+//            }
+//        })
 
-            dummyData.add(manga)
-        }
+        viewModel.fetchLatestMangas()
 
-        return dummyData
     }
 
 }
