@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.mangareader.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,6 +19,8 @@ import model.HomepageManga
 import scraper.NettruyenJsoup
 
 class MainActivity : AppCompatActivity() {
+
+
 
     private val bottomNaviationView : BottomNavigationView by lazy {
         findViewById(R.id.main_bottom_navigation)

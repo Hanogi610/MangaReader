@@ -1,6 +1,7 @@
 package fragment
 
 import adapter.HomeChildFragmentRvAdapter
+import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
+import com.example.mangareader.activity.MangaDetailActivity
 
 class MangaRankingsFragment : Fragment() {
 
@@ -80,7 +82,11 @@ class MangaRankingsFragment : Fragment() {
         // Set up your RecyclerView here...
         recyclerView.layoutManager = GridLayoutManager(context, 4)
         viewModel.mangaList.observe(viewLifecycleOwner, Observer { mangaList ->
-            val adapter = HomeChildFragmentRvAdapter(mangaList)
+            val adapter = HomeChildFragmentRvAdapter(mangaList){
+                val intent = Intent(context, MangaDetailActivity::class.java)
+                intent.putExtra("url", it.url)
+                startActivity(intent)
+            }
             recyclerView.adapter = adapter
         })
         return view

@@ -1,6 +1,9 @@
 package model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.io.Serializable
+
 
 class MangaDetail : Serializable {
     var mangaTitle : String? = null

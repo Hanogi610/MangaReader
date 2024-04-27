@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
 }
 
 android {
@@ -67,4 +68,11 @@ dependencies {
     //lifecycle scope
     implementation (libs.androidx.lifecycle.runtime.ktx)
 
+    //room
+    implementation (libs.androidx.room.runtime.v242)
+    annotationProcessor (libs.androidx.room.compiler)
+    kapt(libs.androidx.room.compiler)
+
+    //Gson
+    implementation (libs.gson)
 }

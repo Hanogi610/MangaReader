@@ -1,6 +1,7 @@
 package fragment
 
 import adapter.HomeChildFragmentRvAdapter
+import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
+import com.example.mangareader.activity.ChapContentActivity
+import com.example.mangareader.activity.MangaDetailActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,6 +25,7 @@ import scraper.NettruyenJsoup
 class LatestMangaFragment : Fragment() {
 
     lateinit var recyclerView : RecyclerView
+    var mangas = mutableListOf<HomepageManga>()
 
     companion object {
         fun newInstance() = LatestMangaFragment()
@@ -50,22 +54,21 @@ class LatestMangaFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(context, 4)
 
         viewModel.mangaList.observe(viewLifecycleOwner, Observer { mangas ->
-            val adapter = HomeChildFragmentRvAdapter(mangas)
+
+            val adapter = HomeChildFragmentRvAdapter(mangas) {
+                val intent = Intent(context, MangaDetailActivity::class.java)
+                intent.putExtra("url",it.url)
+                startActivity(intent)
+            }
             recyclerView.adapter = adapter
         })
 
-//        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                val layoutManager = recyclerView.layoutManager as GridLayoutManager
-//                val totalItemCount = layoutManager.itemCount
-//                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-//
-//                if (totalItemCount -1 == lastVisibleItem) {
-//                    viewModel.fetchLatestMangas()
-//                }
-//            }
-//        })
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+            }
+        })
 
         viewModel.fetchLatestMangas()
 
