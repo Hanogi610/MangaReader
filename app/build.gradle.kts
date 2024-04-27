@@ -64,4 +64,7 @@ dependencies {
     //glide
     implementation (libs.glide)
 
+    //lifecycle scope
+    implementation (libs.androidx.lifecycle.runtime.ktx)
+
 }

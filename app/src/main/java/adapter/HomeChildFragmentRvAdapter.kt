@@ -1,15 +1,15 @@
 package adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import coil.Coil
-import coil.load
 import com.bumptech.glide.Glide
 import com.example.mangareader.R
+import com.example.mangareader.activity.MangaDetailActivity
 import model.HomepageManga
 
 class HomeChildFragmentRvAdapter (private val mangaList: List<HomepageManga>) : RecyclerView.Adapter<HomeChildFragmentViewHolder>() {
@@ -23,7 +23,11 @@ class HomeChildFragmentRvAdapter (private val mangaList: List<HomepageManga>) : 
         val manga = mangaList[position]
         holder.titleTextView.text = manga.title
         Glide.with(holder.imageView.context).load(manga.imageUrl).into(holder.imageView)
-        //Glide.with(holder.imageView.context).load("https://st.nettruyentt.com/data/comics/10/chainsawman-phan-2.jpg").into(holder.imageView)
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, MangaDetailActivity::class.java)
+            intent.putExtra("url", manga.url)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {
