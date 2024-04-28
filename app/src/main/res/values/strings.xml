@@ -11,4 +11,8 @@
     <string name="synopsis">Synopsis</string>
     <string name="back">Back</string>
     <string name="check">Check</string>
+    <string name="previous_chapter">previous chapter</string>
+    <string name="next_chapter">next chapter</string>
+    <string name="current_chapter">current chapter</string>
+    <string name="open_chapter_list">open chapter list</string>
 </resources>

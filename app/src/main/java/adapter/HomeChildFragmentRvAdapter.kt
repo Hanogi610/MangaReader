@@ -1,6 +1,5 @@
 package adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mangareader.R
-import model.HomepageManga
+import model.Manga
 
-class HomeChildFragmentRvAdapter (private val mangaList: List<HomepageManga>,
-    private val onItemClick : (HomepageManga) -> Unit
+class HomeChildFragmentRvAdapter (private val mangaList: List<Manga>,
+                                  private val onItemClick : (Manga) -> Unit
     ) : RecyclerView.Adapter<HomeChildFragmentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeChildFragmentViewHolder {
@@ -31,18 +30,6 @@ class HomeChildFragmentRvAdapter (private val mangaList: List<HomepageManga>,
 
     override fun getItemCount(): Int {
         return mangaList.size
-    }
-
-    fun addMangas(mangas: List<HomepageManga>) {
-        val startPosition = mangaList.size
-        mangaList.toMutableList().addAll(mangas)
-        notifyItemRangeInserted(startPosition, mangas.size)
-    }
-
-    fun submitData(mangas: List<HomepageManga>) {
-        mangaList.toMutableList().clear()
-        mangaList.toMutableList().addAll(mangas)
-        notifyDataSetChanged()
     }
 
 }

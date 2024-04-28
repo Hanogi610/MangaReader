@@ -6,6 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import fragment.LatestMangaFragment
 import fragment.MangaRankingsFragment
 import fragment.MangaTypeFragment
+import fragment.SearchFragment
 
 class HomeViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
@@ -16,8 +17,9 @@ class HomeViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAd
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> LatestMangaFragment()
-                1 -> MangaRankingsFragment()
-                2 -> MangaTypeFragment()
+                1 -> SearchFragment()
+//                2 -> MangaRankingsFragment()
+//                3 -> MangaTypeFragment()
                 else -> LatestMangaFragment()
             }
         }

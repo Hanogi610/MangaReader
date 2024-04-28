@@ -1,22 +1,19 @@
 package model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import java.io.Serializable
 
-
-class MangaDetail : Serializable {
-    var mangaTitle : String? = null
-    var mangaUrl : String? = null
-    var mangaCover : String? = null
-    var mangaAuthor : String? = null
-    var mangaStatus : String? = null
-    var mangaGenre : String? = null
-    var mangaSynopsis : String? = null
-    var mangaViewCount : String? = null
-    var rating : String? = null
-    var ratingCount : String? = null
-    var mangaChapterCount : String? = null
-    var mangaChapterList : ArrayList<Chapter>? = null
-    var mangaOtherName : String? = null
-}
+data class MangaDetail  (
+    var mangaTitle : String,
+    var mangaUrl : String,
+    var mangaCover : String,
+    var mangaAuthor : String,
+    var mangaStatus : String,
+    var mangaGenre : String,
+    var mangaSynopsis : String,
+    var mangaViewCount : String,
+    var rating : String,
+    var ratingCount : String,
+    var mangaChapterCount : String,
+    var mangaChapterList : ArrayList<Chapter>,
+    var mangaOtherName : String,
+    ) : Serializable

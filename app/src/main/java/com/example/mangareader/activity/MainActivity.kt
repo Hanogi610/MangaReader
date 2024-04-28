@@ -2,21 +2,11 @@ package com.example.mangareader.activity
 
 import adapter.MainBottomNavigationViewPagerAdapter
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.enableEdgeToEdge
+import android.os.StrictMode
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.mangareader.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import database.AppDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import model.HomepageManga
-import scraper.NettruyenJsoup
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,9 +21,16 @@ class MainActivity : AppCompatActivity() {
 
     private val mainBottomNavigationViewPagerAdapter = MainBottomNavigationViewPagerAdapter(this)
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val poliicy = StrictMode.ThreadPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build()
+        StrictMode.setThreadPolicy(poliicy)
 
         viewPager.adapter = mainBottomNavigationViewPagerAdapter
         viewPager.isUserInputEnabled = false

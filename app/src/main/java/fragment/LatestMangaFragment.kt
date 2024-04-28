@@ -4,28 +4,22 @@ import adapter.HomeChildFragmentRvAdapter
 import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
-import com.example.mangareader.activity.ChapContentActivity
 import com.example.mangareader.activity.MangaDetailActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import model.HomepageManga
-import scraper.NettruyenJsoup
+import model.Manga
+
 
 class LatestMangaFragment : Fragment() {
 
     lateinit var recyclerView : RecyclerView
-    var mangas = mutableListOf<HomepageManga>()
+    var mangas = mutableListOf<Manga>()
 
     companion object {
         fun newInstance() = LatestMangaFragment()
@@ -58,6 +52,7 @@ class LatestMangaFragment : Fragment() {
             val adapter = HomeChildFragmentRvAdapter(mangas) {
                 val intent = Intent(context, MangaDetailActivity::class.java)
                 intent.putExtra("url",it.url)
+                intent.putExtra("img",it.imageUrl)
                 startActivity(intent)
             }
             recyclerView.adapter = adapter

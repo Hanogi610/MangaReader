@@ -6,24 +6,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import model.HomepageManga
+import kotlinx.coroutines.withContext
+import model.Manga
+import scraper.AsuraJsoup
+import scraper.MangaParkJsoup
 import scraper.NettruyenJsoup
+
 
 class LatestMangaViewModel : ViewModel() {
 
-    val mangaList = MutableLiveData<List<HomepageManga>>()
+    val mangaList = MutableLiveData<List<Manga>>()
     var currentPage = 1
     fun fetchLatestMangas() {
         Log.d("LatestMangaViewModel", "fetchLatestMangas()")
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val scraper = NettruyenJsoup()
-                val mangas = scraper.getLatestMangas("https://www.nettruyenvv.com/?page="+currentPage)
-                mangaList.postValue(mangas)
-                currentPage++
-            } catch (e: Exception) {
-                Log.e("LatestMangaViewModel", "fetchLatestMangas() error: ${e.message}")
-            }
+            val scraper = AsuraJsoup()
+            val mangas = scraper.getLatestManga("https://asuratoon.com/page/"+currentPage)
+            mangaList.postValue(mangas)
+            currentPage++
+            Log.d("LatestMangaViewModel", "fetchLatestMangas() success, ${mangas.size} mangas fetched")
         }
     }
+
+
 }

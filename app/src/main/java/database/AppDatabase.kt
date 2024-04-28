@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import dbModel.ChapterInDb
-import dbModel.MangaDb
+import dbModel.FavoriteManga
+import dbModel.HistoryManga
 
-@Database(entities = [ChapterInDb::class, MangaDb::class], version = 1)
+@Database(entities = [HistoryManga::class,FavoriteManga::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun mangaDbDAO(): MangaDbDAO
-    abstract fun chapterInDbDAO(): ChapterInDbDAO
+    abstract fun historyMangaDAO(): HistoryMangaDAO
+    abstract fun favoriteMangaDAO(): FavoriteMangaDAO
 
     companion object {
         const val DATABASE_NAME = "manga_db"
