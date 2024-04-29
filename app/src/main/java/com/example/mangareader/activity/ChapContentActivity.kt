@@ -68,13 +68,6 @@ class ChapContentActivity : AppCompatActivity() {
             imageRv.layoutManager = LinearLayoutManager(this)
         })
 
-        if(chapPost == 0){
-            prevButton.isEnabled = false
-        }
-        if(chapPost == chapterList.size){
-            nextButton.isEnabled = false
-        }
-
         nextButton.setOnClickListener {
             Log.d("ChapContentActivity", "nextButton.setOnClickListener(): ${chapterList.size} | $chapPost")
             if(chapPost < chapterList.size){
@@ -149,7 +142,6 @@ class ChapContentActivity : AppCompatActivity() {
         chapterListRv = bottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_rv)!!
         chapterListRv.layoutManager = LinearLayoutManager(this)
         bottomSheetRvAdapter = BottomSheetRvAdapter(chapterList, chapPost){ chapter, position ->
-
             val intent = Intent(this@ChapContentActivity, ChapContentActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             intent.putExtra("chapterPost", position)

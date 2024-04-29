@@ -92,4 +92,5 @@ class HistoryFragment : Fragment() {
         // Fetch the latest data from the database
         viewModel.getMangas(requireContext())
     }
+
 }

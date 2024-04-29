@@ -1,6 +1,9 @@
 package adapter
 
+import android.app.Activity
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,31 +35,54 @@ class ChapterContentRvAdapter(private val chapterImages: List<String>) : Recycle
         val chapterImage = chapterImages[position]
         // Show the spinner
         holder.loadingSpinner.visibility = View.VISIBLE
-        // Load the image into the ImageView
+
         Glide.with(holder.imageView.context)
+            .asBitmap()
             .load(chapterImage)
-            .listener(object : RequestListener<Drawable> {
+            .listener(object : RequestListener<Bitmap> {
                 override fun onResourceReady(
-                    resource: Drawable,
-                    model: Any, target: Target<Drawable>,
+                    resource: Bitmap,
+                    model: Any, target: Target<Bitmap>,
                     dataSource: com.bumptech.glide.load.DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    // Hide the spinner when the image is ready
-                    holder.loadingSpinner.visibility = View.GONE
+                    val width = resource.width
+                    val height = resource.height
+                    Log.d("ImageSize", "Width: $width, Height: $height")
+
+                    val displayMetrics = holder.imageView.context.resources.displayMetrics
+                    val screenWidth = displayMetrics.widthPixels
+
+                    (holder.imageView.context as Activity).runOnUiThread {
+                        if (height * width > 11208000) {
+                            Glide.with(holder.imageView.context)
+                                .load(chapterImage)
+                                .override(800, 800)
+                                .into(holder.imageView)
+                        } else {
+                            Glide.with(holder.imageView.context)
+                                .load(chapterImage)
+                                .override(screenWidth, 400)
+                                .into(holder.imageView)
+                        }
+                        holder.loadingSpinner.visibility = View.GONE
+                    }
                     return false
                 }
 
                 override fun onLoadFailed(
                     e: GlideException?,
                     model: Any?,
-                    target: Target<Drawable>,
+                    target: Target<Bitmap>,
                     isFirstResource: Boolean
                 ): Boolean {
-                    holder.loadingSpinner.visibility = View.GONE
+                    (holder.imageView.context as Activity).runOnUiThread {
+                        holder.loadingSpinner.visibility = View.GONE
+                    }
                     return false
                 }
             })
-            .into(holder.imageView)
+            .submit()
     }
+
 }

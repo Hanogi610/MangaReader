@@ -60,7 +60,7 @@ class AsuraJsoup {
             chapter.chapterUrl = e.attr("href")
             chapter.chapterDate = e.select("span.chapterdate").text()
             chapters.add(chapter)
-            Log.d("AsuraJsoup", "getMangaDetail() : ${chapter.chapterTitle} | ${chapter.chapterUrl} | ${chapter.chapterDate}")
+            //Log.d("AsuraJsoup", "getMangaDetail() : ${chapter.chapterTitle} | ${chapter.chapterUrl} | ${chapter.chapterDate}")
         }
         val mangaDetail = MangaDetail(
             title,
@@ -102,7 +102,7 @@ class AsuraJsoup {
             chapter.chapterTitle = e.select("span.chapternum").text()
             chapter.chapterUrl = e.attr("href")
             chapter.chapterDate = e.select("span.chapterdate").text()
-            Log.d("AsuraJsoup", "getChapterList() : ${chapter.chapterTitle} | ${chapter.chapterUrl} | ${chapter.chapterDate}")
+            //Log.d("AsuraJsoup", "getChapterList() : ${chapter.chapterTitle} | ${chapter.chapterUrl} | ${chapter.chapterDate}")
             chapters.add(chapter)
         }
         return@withContext chapters.reversed()
