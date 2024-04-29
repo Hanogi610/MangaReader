@@ -22,10 +22,7 @@ class MangaParkJsoup {
                 title,
                 lastChapter,
                 imageUrl,
-                mangaUrl,
-                "",
-                "",
-                ""
+                mangaUrl
             )
             Log.d("MangaParkJsoup", "getLatestManga() : ${manga.url} | ${manga.title} | ${manga.latestChapter} | ${manga.imageUrl}")
             mangas.add(manga)

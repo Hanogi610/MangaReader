@@ -17,6 +17,4 @@ interface FavoriteMangaDAO {
     @Query("SELECT * FROM favorite")
     fun getAllFavoriteManga(): List<FavoriteManga>
 
-    @Query("SELECT * FROM favorite WHERE mangaUrl = :mangaUrl")
-    fun getFavoriteMangaByUrl(mangaUrl: String): FavoriteManga?
 }

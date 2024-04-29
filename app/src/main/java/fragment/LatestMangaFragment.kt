@@ -19,7 +19,6 @@ import model.Manga
 class LatestMangaFragment : Fragment() {
 
     lateinit var recyclerView : RecyclerView
-    var mangas = mutableListOf<Manga>()
 
     companion object {
         fun newInstance() = LatestMangaFragment()

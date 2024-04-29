@@ -15,4 +15,9 @@
     <string name="next_chapter">next chapter</string>
     <string name="current_chapter">current chapter</string>
     <string name="open_chapter_list">open chapter list</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search manga</string>
+    <string name="manga_synopsis_more">%s ...More</string>
+    <string name="manga_synopsis_less">%s ...Less</string>
+    <string name="input_name">Input name</string>
 </resources>

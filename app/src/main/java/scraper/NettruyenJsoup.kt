@@ -32,17 +32,11 @@ class NettruyenJsoup {
                 latestChapter = "",
                 imageUrl = "",
                 url = "",
-                viewcount = "",
-                commentcount = "",
-                favcount = ""
             )
             manga.title = element.select("h3 a").text()
             manga.latestChapter = element.select("ul.comic-item li")[0].select("a").text()
             manga.imageUrl ="https://"+element.select("div.image a img").attr("data-original")
             manga.url = element.select("h3 a").attr("href")
-            manga.viewcount = element.select("div.view i.fa-eye").text()
-            manga.commentcount = element.select("div.view i.fa-comment").text()
-            manga.favcount = element.select("div.view i.fa-heart").text()
             println("manga title:" + manga.title)
             println("manga latest chap:" + manga.latestChapter)
             println("manga image url:" + manga.imageUrl)

@@ -18,7 +18,7 @@ class HomeViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAd
             return when (position) {
                 0 -> LatestMangaFragment()
                 1 -> SearchFragment()
-//                2 -> MangaRankingsFragment()
+                2 -> MangaRankingsFragment()
 //                3 -> MangaTypeFragment()
                 else -> LatestMangaFragment()
             }

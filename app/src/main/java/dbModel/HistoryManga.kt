@@ -10,8 +10,8 @@ data class HistoryManga(
     val mangaTitle: String,
     val mangaUrl: String,
     val imageUrl : String,
-    val lastReadChapterName : String,
-    val lastReadChapterUrl : String,
+    var lastReadChapterName : String,
+    var lastReadChapterUrl : String,
     var lastRead : Long,
     var lastReadChapterPost : Int
 )

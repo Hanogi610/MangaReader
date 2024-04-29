@@ -7,8 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
 import model.Chapter
+import model.MangaDetail
 
-class MangaDetailRvAdapter(private val chapters: List<Chapter>) : RecyclerView.Adapter<MangaDetailRvAdapter.RvChapterItemViewHolder>() {
+class MangaDetailRvAdapter(private val chapters: List<Chapter>, private val onItemClick : (Chapter, Int) -> Unit) : RecyclerView.Adapter<MangaDetailRvAdapter.RvChapterItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RvChapterItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.rv_chapter_item, parent, false)
@@ -17,7 +18,11 @@ class MangaDetailRvAdapter(private val chapters: List<Chapter>) : RecyclerView.A
 
     override fun onBindViewHolder(holder: RvChapterItemViewHolder, position: Int) {
         val chapter = chapters[position]
-        holder.bind(chapter)
+        holder.chapterTitle.text = chapter.chapterTitle
+        holder.chapterDate.text = chapter.chapterDate
+        holder.itemView.setOnClickListener{
+            onItemClick(chapter, position)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -25,12 +30,8 @@ class MangaDetailRvAdapter(private val chapters: List<Chapter>) : RecyclerView.A
     }
 
     class RvChapterItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        private val chapterTitle: TextView = view.findViewById(R.id.chapter_title)
-        private val chapterDate: TextView = view.findViewById(R.id.chapter_date)
+        val chapterTitle: TextView = view.findViewById(R.id.chapter_title)
+        val chapterDate: TextView = view.findViewById(R.id.chapter_date)
 
-        fun bind(chapter: Chapter) {
-            chapterTitle.text = chapter.chapterTitle
-            chapterDate.text = chapter.chapterDate
-        }
     }
 }

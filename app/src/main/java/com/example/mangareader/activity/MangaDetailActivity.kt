@@ -40,8 +40,11 @@ class MangaDetailActivity : AppCompatActivity() {
     lateinit var checkButton: Button
     lateinit var INSTANCE : AppDatabase
     lateinit var mangaInFav : FavoriteManga
-    var isExist = 0
+    lateinit var mangaInHistory : HistoryManga
+    var isExistInFav = 0
+    var isExistInHis = 0
     var url : String = ""
+
 
     private val viewModel : MangaDetailViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +53,8 @@ class MangaDetailActivity : AppCompatActivity() {
 
         initialize()
 
-        checkMangaInDbToIsExist(url)
+        checkMangaIfIsExistInFav(url)
+        checkMangaIfIsExistInHistory(url)
 
         viewModel.getMangaDetail(url)
 
@@ -65,19 +69,49 @@ class MangaDetailActivity : AppCompatActivity() {
             mangaGenre.text = mangaDetail.mangaGenre
             mangaViewCount.text = mangaDetail.mangaViewCount
             mangaChapterCount.text = mangaDetail.mangaChapterCount
-            val adapter = MangaDetailRvAdapter(mangaDetail.mangaChapterList!!)
+            val adapter = MangaDetailRvAdapter(mangaDetail.mangaChapterList!!){ chapter, position ->
+                val intent = Intent(this@MangaDetailActivity, ChapContentActivity::class.java)
+                intent.putExtra("chapterPost", position)
+                intent.putExtra("mangaUrl", url)
+                intent.putExtra("chapterList",mangaDetail.mangaChapterList)
+                intent.putExtra("chapUrl", chapter.chapterUrl)
+                viewModel.viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        if(isExistInHis==0){
+                            mangaInHistory = HistoryManga(
+                                0,
+                                mangaDetail.mangaTitle,
+                                mangaDetail.mangaUrl,
+                                mangaDetail.mangaCover,
+                                chapter.chapterTitle.toString(),
+                                chapter.chapterUrl.toString(),
+                                Date().time,
+                                0
+                            )
+                            mangaInHistory.id = INSTANCE.historyMangaDAO().insertHistoryManga(mangaInHistory)
+                        }else{
+                            mangaInHistory.lastReadChapterName = chapter.chapterTitle.toString()
+                            mangaInHistory.lastReadChapterUrl = chapter.chapterUrl.toString()
+                            mangaInHistory.lastRead = Date().time
+                            mangaInHistory.lastReadChapterPost = position
+                            INSTANCE.historyMangaDAO().updateHistoryManga(mangaInHistory.mangaUrl, mangaInHistory.lastReadChapterName,mangaInHistory.lastReadChapterUrl, mangaInHistory.lastRead, mangaInHistory.lastReadChapterPost)
+                        }
+                    }
+                }
+//                startActivity(intent)
+            }
             chapterList.layoutManager = LinearLayoutManager(this@MangaDetailActivity)
             chapterList.adapter = adapter
 
             // Set the synopsis with a max line default of 3 and can be extended when clicked
             var isExpanded = false
-            mangaSynopsis.text = mangaDetail.mangaSynopsis + " ...More"
+            mangaSynopsis.text = getString(R.string.manga_synopsis_more, mangaDetail.mangaSynopsis)
             mangaSynopsis.maxLines = 3
             mangaSynopsis.setOnClickListener {
                 it as TextView
                 if (isExpanded) {
                     // If the synopsis is currently expanded, collapse it
-                    it.text = mangaDetail.mangaSynopsis + " ...Less"
+                    it.text = getString(R.string.manga_synopsis_less, mangaDetail.mangaSynopsis)
                     it.maxLines = 3
                     isExpanded = false
                 } else {
@@ -92,13 +126,13 @@ class MangaDetailActivity : AppCompatActivity() {
         // Set the onClickListener for the favorite button
         favoriteButton.setOnClickListener {
             // Retrieve mangaDetail value from LiveData safely
-            if(isExist == 1){
+            if(isExistInFav == 1){
                 viewModel.viewModelScope.launch {
                     withContext(Dispatchers.IO) {
                         INSTANCE.favoriteMangaDAO().deleteFavoriteManga(mangaInFav)
                     }
-                    isExist = 0
-                    upDateFavoriteButton(isExist)
+                    isExistInFav = 0
+                    upDateFavoriteButton(isExistInFav)
                 }
             }else{
                 viewModel.mangaDetail.value?.let { mangaDetail ->
@@ -108,8 +142,8 @@ class MangaDetailActivity : AppCompatActivity() {
                         withContext(Dispatchers.IO) {
                             mangaInFav.id = INSTANCE.favoriteMangaDAO().insertFavoriteManga(mangaInFav)
                         }
-                        isExist = 1
-                        upDateFavoriteButton(isExist)
+                        isExistInFav = 1
+                        upDateFavoriteButton(isExistInFav)
                     }
 
                 }
@@ -122,9 +156,8 @@ class MangaDetailActivity : AppCompatActivity() {
                 // Perform database operation in a coroutine
                 viewModel.viewModelScope.launch {
                     withContext(Dispatchers.IO) {
-                        var historyManga = INSTANCE.historyMangaDAO().checkIfExistHistory(url)
-                        if(historyManga == null){
-                            historyManga = HistoryManga(
+                        if(isExistInHis==0){
+                            mangaInHistory = HistoryManga(
                                 0,
                                 mangaDetail.mangaTitle,
                                 mangaDetail.mangaUrl,
@@ -134,20 +167,22 @@ class MangaDetailActivity : AppCompatActivity() {
                                 Date().time,
                                 0
                             )
-                            historyManga.id = INSTANCE.historyMangaDAO().insertHistoryManga(historyManga)
+                            mangaInHistory.id = INSTANCE.historyMangaDAO().insertHistoryManga(mangaInHistory)
                             val intentC = Intent(this@MangaDetailActivity, ChapContentActivity::class.java)
-                            intentC.putExtra("chapterPost", historyManga.lastReadChapterPost)
-                            intentC.putExtra("mangaUrl", historyManga.mangaUrl)
+                            intentC.putExtra("chapterPost", mangaInHistory.lastReadChapterPost)
+                            intentC.putExtra("mangaUrl", mangaInHistory.mangaUrl)
                             intentC.putExtra("chapterList",mangaDetail.mangaChapterList)
-                            startActivity(intentC)
+                            intentC.putExtra("chapUrl", mangaInHistory.lastReadChapterUrl)
+//                            startActivity(intentC)
                         }else{
-                            historyManga.lastRead = Date().time
+                            mangaInHistory.lastRead = Date().time
                             val intentC = Intent(this@MangaDetailActivity, ChapContentActivity::class.java)
-                            intentC.putExtra("chapterPost", historyManga.lastReadChapterPost)
-                            intentC.putExtra("mangaUrl", historyManga.mangaUrl)
+                            intentC.putExtra("chapterPost", mangaInHistory.lastReadChapterPost)
+                            intentC.putExtra("mangaUrl", mangaInHistory.mangaUrl)
                             intentC.putExtra("chapterList",mangaDetail.mangaChapterList)
-                            INSTANCE.historyMangaDAO().updateHistoryMangaLastReadById(historyManga.id, historyManga.lastRead)
-                            startActivity(intentC)
+                            intentC.putExtra("chapUrl", mangaInHistory.lastReadChapterUrl)
+                            INSTANCE.historyMangaDAO().updateHistoryMangaLastReadById(mangaInHistory.id, mangaInHistory.lastRead)
+//                            startActivity(intentC)
                         }
                     }
                 }
@@ -188,19 +223,37 @@ class MangaDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkMangaInDbToIsExist(url : String){
-        Log.d("MangaDetailActivity", "checkMangaInDbToIsExist() $url")
+    private fun checkMangaIfIsExistInFav(url : String){
         // Perform database operation in a coroutine
         viewModel.viewModelScope.launch {
-            Log.d("MangaDetailActivity", "checkMangaInDbToIsExist() viewModelScope.launch()")
             withContext(Dispatchers.IO) {
-                Log.d("MangaDetailActivity", "checkMangaInDbToIsExist() withContext()")
-                INSTANCE.favoriteMangaDAO().getFavoriteMangaByUrl(url)?.let {
-                    isExist = 1
-                    mangaInFav = it
+                val favMangas = INSTANCE.favoriteMangaDAO().getAllFavoriteManga()
+                for(manga in favMangas){
+                    if(manga.mangaUrl == url){
+                        isExistInFav = 1
+                        mangaInFav = manga
+                        break
+                    }
                 }
             }
-            upDateFavoriteButton(isExist)
+            upDateFavoriteButton(isExistInFav)
+        }
+    }
+
+    private fun checkMangaIfIsExistInHistory(url : String){
+        // Perform database operation in a coroutine
+        Log.d("MangaDetailActivity", "checkMangaIfIsExistInHistory: $url")
+        viewModel.viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val historyManga = INSTANCE.historyMangaDAO().getAllHistoryManga()
+                for(manga in historyManga){
+                    if(manga.mangaUrl == url){
+                        isExistInHis = 1
+                        mangaInHistory = manga
+                        break
+                    }
+                }
+            }
         }
     }
 }
