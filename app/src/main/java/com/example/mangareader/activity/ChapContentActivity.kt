@@ -76,12 +76,15 @@ class ChapContentActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
+            Log.d("ChapContentActivity", "nextButton.setOnClickListener(): ${chapterList.size} | $chapPost")
             if(chapPost < chapterList.size){
                 chapPost++
                 val intentC = Intent(this, ChapContentActivity::class.java)
+                intentC.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 intentC.putExtra("mangaUrl", mangaUrl)
                 intentC.putExtra("chapterList", chapterList)
                 intentC.putExtra("chapPost", chapPost)
+                intentC.putExtra("chapTitle",chapterList.get(chapPost).chapterTitle)
                 intentC.putExtra("chapUrl",chapterList.get(chapPost).chapterUrl)
                 viewModel.viewModelScope.launch(Dispatchers.IO) {
                     INSTANCE.historyMangaDAO().updateHistoryManga(mangaUrl, chapterList.get(chapPost).chapterTitle.toString(), chapterList.get(chapPost).chapterUrl.toString(),Date().time,chapPost)
@@ -95,10 +98,12 @@ class ChapContentActivity : AppCompatActivity() {
             if(chapPost > 0){
                 chapPost--
                 val intentC = Intent(this, ChapContentActivity::class.java)
+                intentC.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 intentC.putExtra("mangaUrl", mangaUrl)
                 intentC.putExtra("chapterList", chapterList)
                 intentC.putExtra("chapPost", chapPost)
                 intentC.putExtra("chapUrl",chapterList.get(chapPost).chapterUrl)
+                intentC.putExtra("chapTitle",chapterList.get(chapPost).chapterTitle)
                 viewModel.viewModelScope.launch(Dispatchers.IO) {
                     INSTANCE.historyMangaDAO().updateHistoryManga(mangaUrl, chapterList.get(chapPost).chapterTitle.toString(), chapterList.get(chapPost).chapterUrl.toString(),Date().time,chapPost)
                 }
@@ -110,6 +115,7 @@ class ChapContentActivity : AppCompatActivity() {
     }
 
     private fun chapterListInit() {
+        Log.d("ChapContentActivity", "chapterListInit(): ${chapterList.size}")
         if(chapterList.isEmpty()){
             getChapterList(mangaUrl)
             viewModel.chapterList.observe(this, Observer{
@@ -143,12 +149,18 @@ class ChapContentActivity : AppCompatActivity() {
         chapterListRv = bottomSheetDialog.findViewById<RecyclerView>(R.id.bottom_sheet_rv)!!
         chapterListRv.layoutManager = LinearLayoutManager(this)
         bottomSheetRvAdapter = BottomSheetRvAdapter(chapterList, chapPost){ chapter, position ->
+
             val intent = Intent(this@ChapContentActivity, ChapContentActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             intent.putExtra("chapterPost", position)
             intent.putExtra("mangaUrl", mangaUrl)
             intent.putExtra("chapterList",chapterList)
             intent.putExtra("chapUrl",chapter.chapterUrl)
             intent.putExtra("chapTitle",chapter.chapterTitle)
+            viewModel.viewModelScope.launch(Dispatchers.IO) {
+                Log.d("ChapContentActivity", "bottomSheetRvAdapter.setOnClickListener(): $mangaUrl | ${chapter.chapterTitle} | ${chapter.chapterUrl} | ${Date().time} | $position")
+                INSTANCE.historyMangaDAO().updateHistoryManga(mangaUrl, chapterList.get(position).chapterTitle.toString(), chapterList.get(position).chapterUrl.toString(),Date().time,position)
+            }
             startActivity(intent)
         }
         chapterListRv.adapter = bottomSheetRvAdapter
