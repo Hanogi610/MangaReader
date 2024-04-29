@@ -2,16 +2,16 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:minHeight="500dp">
+
 
     <ImageView
         android:id="@+id/chapterImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/chapter_img_test"/>
-
+        android:scaleType="matrix"/>
 
     <ProgressBar
         android:id="@+id/loading_spinner"

@@ -76,4 +76,7 @@ dependencies {
     //Gson
     implementation (libs.gson)
 
+    //
+    implementation (libs.subsampling.scale.image.view)
+
 }

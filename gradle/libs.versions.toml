@@ -22,6 +22,7 @@ lifecycleViewmodelCompose = "2.7.0"
 photoview = "2.0.0"
 roomRuntime = "2.6.1"
 roomRuntimeVersion = "2.4.2"
+subsamplingScaleImageView = "3.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 photoView = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
+subsampling-scale-image-view = { module = "com.davemorrissey.labs:subsampling-scale-image-view", version.ref = "subsamplingScaleImageView" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
