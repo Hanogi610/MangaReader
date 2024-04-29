@@ -5,9 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import fragment.HistoryFragment
 import fragment.HomeFragment
-import fragment.LatestMangaFragment
 import fragment.LibraryFragment
-import fragment.MiscellaneousFragment
 
 class MainBottomNavigationViewPagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
@@ -21,7 +19,6 @@ class MainBottomNavigationViewPagerAdapter(fragmentActivity: FragmentActivity) :
             0 -> HomeFragment()
             1 -> HistoryFragment()
             2 -> LibraryFragment()
-            3 -> MiscellaneousFragment()
             else -> HomeFragment()
         }
     }

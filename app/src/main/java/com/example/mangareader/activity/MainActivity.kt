@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
                     0 -> R.id.main_bottom_navigation_home
                     1 -> R.id.main_bottom_navigation_history
                     2 -> R.id.main_bottom_navigation_library
-                    3 -> R.id.main_bottom_navigation_settings
                     else -> R.id.main_bottom_navigation_home
                 }
             }
@@ -50,7 +49,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.main_bottom_navigation_home -> 0
                 R.id.main_bottom_navigation_history -> 1
                 R.id.main_bottom_navigation_library -> 2
-                R.id.main_bottom_navigation_settings -> 3
                 else -> 0
             }
             true

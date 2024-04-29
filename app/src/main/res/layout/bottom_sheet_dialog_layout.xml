@@ -16,10 +16,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bottom_sheet_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_drag_handle_view"
+        android:layout_height="350dp"
+        android:nestedScrollingEnabled="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:nestedScrollingEnabled="true"/>
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_drag_handle_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -60,6 +60,7 @@ class AsuraJsoup {
             chapter.chapterUrl = e.attr("href")
             chapter.chapterDate = e.select("span.chapterdate").text()
             chapters.add(chapter)
+            Log.d("AsuraJsoup", "getMangaDetail() : ${chapter.chapterTitle} | ${chapter.chapterUrl} | ${chapter.chapterDate}")
         }
         val mangaDetail = MangaDetail(
             title,
