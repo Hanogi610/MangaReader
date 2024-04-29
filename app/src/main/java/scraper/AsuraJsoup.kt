@@ -53,7 +53,7 @@ class AsuraJsoup {
         }
         val chapters = ArrayList<Chapter>()
         val elements = doc.select("div.bxcl ul li a")
-        val chapterCount = elements.size
+        val chapterCount = elements.size.toString() + " chapters"
         for(e in elements){
             val chapter = Chapter()
             chapter.chapterTitle = e.select("span.chapternum").text()

@@ -16,14 +16,12 @@ import scraper.NettruyenJsoup
 class LatestMangaViewModel : ViewModel() {
 
     val mangaList = MutableLiveData<List<Manga>>()
-    var currentPage = 1
-    fun fetchLatestMangas() {
+    fun fetchLatestMangas(page : Int) {
         Log.d("LatestMangaViewModel", "fetchLatestMangas()")
         viewModelScope.launch(Dispatchers.IO) {
             val scraper = AsuraJsoup()
-            val mangas = scraper.getLatestManga("https://asuratoon.com/page/"+currentPage)
+            val mangas = scraper.getLatestManga("https://asuratoon.com/page/"+page)
             mangaList.postValue(mangas)
-            currentPage++
             Log.d("LatestMangaViewModel", "fetchLatestMangas() success, ${mangas.size} mangas fetched")
         }
     }

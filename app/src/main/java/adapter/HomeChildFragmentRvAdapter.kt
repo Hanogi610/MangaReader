@@ -10,10 +10,13 @@ import com.bumptech.glide.Glide
 import com.example.mangareader.R
 import model.Manga
 
-class HomeChildFragmentRvAdapter (private val mangaList: List<Manga>,
+class HomeChildFragmentRvAdapter (private var mangaList: MutableList<Manga>,
                                   private val onItemClick : (Manga) -> Unit
-    ) : RecyclerView.Adapter<HomeChildFragmentViewHolder>() {
-
+    ) : RecyclerView.Adapter<HomeChildFragmentRvAdapter.HomeChildFragmentViewHolder>() {
+    class HomeChildFragmentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val imageView: ImageView = view.findViewById(R.id.iv_home_child_fragment_rv_item)
+        val titleTextView: TextView = view.findViewById(R.id.tv_home_child_fragment_rv_item_title)
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeChildFragmentViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.home_child_fragment_rv_item, parent, false)
         return HomeChildFragmentViewHolder(view)
@@ -32,8 +35,15 @@ class HomeChildFragmentRvAdapter (private val mangaList: List<Manga>,
         return mangaList.size
     }
 
-}
-class HomeChildFragmentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val imageView: ImageView = view.findViewById(R.id.iv_home_child_fragment_rv_item)
-    val titleTextView: TextView = view.findViewById(R.id.tv_home_child_fragment_rv_item_title)
+    fun updateData(newMangaList: List<Manga>) {
+        val oldSize = mangaList.size
+        mangaList.addAll(newMangaList)
+        notifyItemRangeInserted(oldSize, newMangaList.size)
+    }
+
+    fun submitData(mangas : List<Manga>){
+        mangaList = mangas.toMutableList()
+        notifyDataSetChanged()
+    }
+
 }

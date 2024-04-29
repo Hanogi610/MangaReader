@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
 import model.Chapter
 
-class BottomSheetRvAdapter(private val chapters: List<Chapter>, private val onItemClick : (Chapter, Int) -> Unit): RecyclerView.Adapter<BottomSheetRvAdapter.viewHolder>(){
+class BottomSheetRvAdapter(private var chapters: List<Chapter>, private val chapterPost : Int, private val onItemClick : (Chapter, Int) -> Unit): RecyclerView.Adapter<BottomSheetRvAdapter.viewHolder>(){
     class viewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title = view.findViewById<TextView>(R.id.chapterTitle)
+        val date = view.findViewById<TextView>(R.id.chapterDate)
+        val status = view.findViewById<View>(R.id.status)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
@@ -24,8 +26,19 @@ class BottomSheetRvAdapter(private val chapters: List<Chapter>, private val onIt
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
         holder.title.text = chapters[position].chapterTitle
+        holder.date.text = chapters[position].chapterDate
+        if(position == chapterPost) {
+            holder.status.visibility = View.VISIBLE
+        }else{
+            holder.status.visibility = View.GONE
+        }
         holder.itemView.setOnClickListener {
             onItemClick(chapters[position], position)
         }
+    }
+
+    fun updateData(newData: List<Chapter>){
+        chapters = newData
+        notifyDataSetChanged()
     }
 }

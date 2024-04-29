@@ -65,7 +65,7 @@ class SearchFragment : Fragment() {
 
         viewModel.searchResult.observe(viewLifecycleOwner, Observer{mangas->
             loadingSpinner.visibility = View.GONE
-            adapter = HomeChildFragmentRvAdapter(mangas) {
+            adapter = HomeChildFragmentRvAdapter(mangas.toMutableList()) {
                 val intent = Intent(context, MangaDetailActivity::class.java)
                 intent.putExtra("url",it.url)
                 intent.putExtra("img",it.imageUrl)

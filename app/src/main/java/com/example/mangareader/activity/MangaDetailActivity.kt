@@ -75,6 +75,7 @@ class MangaDetailActivity : AppCompatActivity() {
                 intent.putExtra("mangaUrl", url)
                 intent.putExtra("chapterList",mangaDetail.mangaChapterList)
                 intent.putExtra("chapUrl", chapter.chapterUrl)
+                intent.putExtra("chapTitle", chapter.chapterTitle)
                 viewModel.viewModelScope.launch {
                     withContext(Dispatchers.IO) {
                         if(isExistInHis==0){
@@ -98,7 +99,7 @@ class MangaDetailActivity : AppCompatActivity() {
                         }
                     }
                 }
-//                startActivity(intent)
+                startActivity(intent)
             }
             chapterList.layoutManager = LinearLayoutManager(this@MangaDetailActivity)
             chapterList.adapter = adapter
@@ -173,7 +174,8 @@ class MangaDetailActivity : AppCompatActivity() {
                             intentC.putExtra("mangaUrl", mangaInHistory.mangaUrl)
                             intentC.putExtra("chapterList",mangaDetail.mangaChapterList)
                             intentC.putExtra("chapUrl", mangaInHistory.lastReadChapterUrl)
-//                            startActivity(intentC)
+                            intentC.putExtra("chapTitle", mangaInHistory.lastReadChapterName)
+                            startActivity(intentC)
                         }else{
                             mangaInHistory.lastRead = Date().time
                             val intentC = Intent(this@MangaDetailActivity, ChapContentActivity::class.java)
@@ -181,8 +183,9 @@ class MangaDetailActivity : AppCompatActivity() {
                             intentC.putExtra("mangaUrl", mangaInHistory.mangaUrl)
                             intentC.putExtra("chapterList",mangaDetail.mangaChapterList)
                             intentC.putExtra("chapUrl", mangaInHistory.lastReadChapterUrl)
+                            intentC.putExtra("chapTitle", mangaInHistory.lastReadChapterName)
                             INSTANCE.historyMangaDAO().updateHistoryMangaLastReadById(mangaInHistory.id, mangaInHistory.lastRead)
-//                            startActivity(intentC)
+                            startActivity(intentC)
                         }
                     }
                 }

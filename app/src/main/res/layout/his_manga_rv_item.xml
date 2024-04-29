@@ -26,7 +26,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_margin="2dp"
@@ -38,22 +38,26 @@
         <TextView
             android:id="@+id/mangaTitle"
             android:layout_width="wrap_content"
+            android:maxWidth="200dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="Manga Title"
             android:layout_gravity="center_horizontal"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_weight="1"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Last Read Chapter Name"
+            android:maxWidth="200dp"
             android:id="@+id/chapterName"
             android:maxLines="1"
             android:ellipsize="end"
             android:layout_gravity="center_horizontal"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 

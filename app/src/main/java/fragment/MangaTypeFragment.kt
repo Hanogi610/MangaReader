@@ -66,7 +66,7 @@ class MangaTypeFragment : Fragment() {
         // Set up your RecyclerView
         recyclerView.layoutManager = GridLayoutManager(context, 4)
         viewModel.mangaList.observe(viewLifecycleOwner, Observer { mangas ->
-            val adapter = HomeChildFragmentRvAdapter(mangas){
+            val adapter = HomeChildFragmentRvAdapter(mangas.toMutableList()){
 
                 val intent = Intent(context, MangaDetailActivity::class.java)
                 intent.putExtra("url",it.url)

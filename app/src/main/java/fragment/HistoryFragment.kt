@@ -62,6 +62,7 @@ class HistoryFragment : Fragment() {
                     val chapterList = arrayListOf<Chapter>()
                     intent.putExtra("chapterList",chapterList)
                     intent.putExtra("chapUrl",historyManga.lastReadChapterUrl)
+                    intent.putExtra("chapTitle",historyManga.lastReadChapterName)
                     startActivity(intent)
                 },
                 onRemoveClick = { historyManga ->
