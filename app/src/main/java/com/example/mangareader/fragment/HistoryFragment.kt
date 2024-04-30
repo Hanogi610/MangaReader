@@ -53,6 +53,8 @@ class HistoryFragment : Fragment() {
         rv = view.findViewById(R.id.historyRecyclerView)
         rv.layoutManager = LinearLayoutManager(requireContext())
 
+        INSTANCE = AppDatabase.getInstance(requireContext())
+
         viewModel.mangas.observe(viewLifecycleOwner, Observer{ mangas ->
             adapter = HisMangaRvAdapter(mangas,
                 onItemClick = { historyManga ->

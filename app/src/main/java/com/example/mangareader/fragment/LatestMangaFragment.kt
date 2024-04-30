@@ -120,6 +120,7 @@ class LatestMangaFragment : Fragment() {
 
         if(isNetworkAvailable(requireContext())){
             viewModel.fetchLatestMangas(currentPage++)
+            progressBar.visibility = View.VISIBLE
         }else{
             progressBar.visibility = View.GONE
             tvNoInternet.visibility = View.VISIBLE

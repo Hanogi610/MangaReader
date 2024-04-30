@@ -50,6 +50,8 @@ class LibraryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        INSTANCE = AppDatabase.getInstance(requireContext())
+
         rv = view.findViewById(R.id.libraryRv)
         rv.layoutManager = LinearLayoutManager(requireContext())
         viewModel.mangaList.observe(viewLifecycleOwner, Observer {mangas ->
