@@ -1,6 +1,6 @@
 package com.example.mangareader.fragment
 
-import adapter.HomeChildFragmentRvAdapter
+import com.example.mangareader.adapter.HomeChildFragmentRvAdapter
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager

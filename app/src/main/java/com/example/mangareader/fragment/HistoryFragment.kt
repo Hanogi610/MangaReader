@@ -1,6 +1,6 @@
 package com.example.mangareader.fragment
 
-import adapter.HisMangaRvAdapter
+import com.example.mangareader.adapter.HisMangaRvAdapter
 import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle

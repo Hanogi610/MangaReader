@@ -1,14 +1,17 @@
-package adapter
+package com.example.mangareader.adapter
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.ConnectivityManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
@@ -20,6 +23,7 @@ class ChapterContentRvAdapter(private val chapterImages: List<String>) : Recycle
     class ChapterContentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.chapterImage)
         val loadingSpinner: ProgressBar = view.findViewById(R.id.loading_spinner)
+        val tvNoInternet: TextView = view.findViewById(R.id.tv_no_internet)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChapterContentViewHolder {
@@ -35,6 +39,7 @@ class ChapterContentRvAdapter(private val chapterImages: List<String>) : Recycle
         val chapterImage = chapterImages[position]
         // Show the spinner
         holder.loadingSpinner.visibility = View.VISIBLE
+        holder.tvNoInternet.visibility = View.GONE
 
         Glide.with(holder.imageView.context)
             .asBitmap()
@@ -54,7 +59,7 @@ class ChapterContentRvAdapter(private val chapterImages: List<String>) : Recycle
                     val screenWidth = displayMetrics.widthPixels
 
                     (holder.imageView.context as Activity).runOnUiThread {
-                        if (height * width > 11208000) {
+                        if (height * width > 12000000) {
                             Glide.with(holder.imageView.context)
                                 .load(chapterImage)
                                 .override(800, 800)
@@ -78,11 +83,29 @@ class ChapterContentRvAdapter(private val chapterImages: List<String>) : Recycle
                 ): Boolean {
                     (holder.imageView.context as Activity).runOnUiThread {
                         holder.loadingSpinner.visibility = View.GONE
+                        if (!isNetworkAvailable(holder.imageView.context)) {
+                            holder.tvNoInternet.visibility = View.VISIBLE
+                        }
                     }
                     return false
                 }
             })
             .submit()
-    }
 
+        holder.tvNoInternet.setOnClickListener {
+            holder.tvNoInternet.visibility = View.GONE
+            holder.loadingSpinner.visibility = View.VISIBLE
+            if (isNetworkAvailable(holder.imageView.context)) {
+                onBindViewHolder(holder, position)
+            } else {
+                holder.loadingSpinner.visibility = View.GONE
+                holder.tvNoInternet.visibility = View.VISIBLE
+            }
+        }
+    }
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
 }

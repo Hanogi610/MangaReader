@@ -1,6 +1,6 @@
 package com.example.mangareader.activity
 
-import adapter.MainBottomNavigationViewPagerAdapter
+import com.example.mangareader.adapter.MainBottomNavigationViewPagerAdapter
 import android.os.Bundle
 import android.os.StrictMode
 import androidx.appcompat.app.AppCompatActivity

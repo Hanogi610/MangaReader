@@ -1,6 +1,6 @@
 package com.example.mangareader.fragment
 
-import adapter.HomeViewPagerAdapter
+import com.example.mangareader.adapter.HomeViewPagerAdapter
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment

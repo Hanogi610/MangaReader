@@ -1,12 +1,16 @@
 package com.example.mangareader.activity
 
-import adapter.MangaDetailRvAdapter
+import com.example.mangareader.adapter.MangaDetailRvAdapter
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +26,6 @@ import com.example.mangareader.dbModel.HistoryManga
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.example.mangareader.model.Chapter
 import java.util.Date
 
 class MangaDetailActivity : AppCompatActivity() {
@@ -43,6 +46,9 @@ class MangaDetailActivity : AppCompatActivity() {
     lateinit var mangaInFav : FavoriteManga
     lateinit var mangaInHistory : HistoryManga
     lateinit var adapter: MangaDetailRvAdapter
+    lateinit var tvNoInternet : TextView
+    lateinit var toolbar: Toolbar
+    lateinit var toolbarView : View
     var isExistInFav = 0
     var isExistInHis = 0
     var url : String = ""
@@ -58,7 +64,24 @@ class MangaDetailActivity : AppCompatActivity() {
         checkMangaIfIsExistInFav(url)
         checkMangaIfIsExistInHistory(url)
 
-        viewModel.getMangaDetail(url)
+        if(!isNetworkAvailable(this)){
+            tvNoInternet.visibility = View.VISIBLE
+            toolbarView.visibility = View.GONE
+        }else{
+            tvNoInternet.visibility = View.GONE
+            toolbarView.visibility = View.VISIBLE
+            viewModel.getMangaDetail(url)
+        }
+
+        tvNoInternet.setOnClickListener(View.OnClickListener {
+            if(isNetworkAvailable(this)){
+                tvNoInternet.visibility = View.GONE
+                toolbarView.visibility = View.VISIBLE
+                viewModel.getMangaDetail(url)
+            }else{
+                Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+            }
+        })
 
         // Observe the mangaDetail LiveData
         viewModel.mangaDetail.observe(this, Observer{ mangaDetail ->
@@ -205,6 +228,7 @@ class MangaDetailActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
+        // Initialize the views
         mangaCover = findViewById(R.id.manga_cover)
         mangaTitle = findViewById(R.id.manga_title)
         mangaAuthor = findViewById(R.id.manga_author)
@@ -217,10 +241,15 @@ class MangaDetailActivity : AppCompatActivity() {
         favoriteButton = findViewById(R.id.manga_favorite)
         readNowButton = findViewById(R.id.manga_read)
         checkButton = findViewById(R.id.manga_check_for_updates)
+        tvNoInternet = findViewById(R.id.tv_no_internet)
+
+        //init db
         INSTANCE = AppDatabase.getInstance(this)
         url = intent.getStringExtra("url").toString()
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        // Set up the toolbar
+        toolbar = findViewById(R.id.toolbar)
+        toolbarView = findViewById(R.id.bg_fade_toolbar_view)
         bg = toolbar.findViewById<ImageView>(R.id.manga_cover_to_bg)
         setSupportActionBar(toolbar)
         val backButton = toolbar.findViewById<ImageView>(R.id.back_button)
@@ -269,5 +298,10 @@ class MangaDetailActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

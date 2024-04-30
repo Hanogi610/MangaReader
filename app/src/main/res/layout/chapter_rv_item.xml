@@ -19,5 +19,17 @@
         android:layout_gravity="center"
         android:elevation="4dp"
         android:visibility="visible"/>
+    <TextView
+        android:elevation="10dp"
+        android:id="@+id/tv_no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="?attr/colorSurface"
+        android:gravity="center"
+        android:text="@string/try_again"
+        android:textColor="?attr/colorOnSurface"
+        android:visibility="gone"
+        android:textSize="20sp" />
 </FrameLayout>
 

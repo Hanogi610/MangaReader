@@ -1,6 +1,6 @@
 package com.example.mangareader.fragment
 
-import adapter.HomeChildFragmentRvAdapter
+import com.example.mangareader.adapter.HomeChildFragmentRvAdapter
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -82,6 +82,10 @@ class LatestMangaFragment : Fragment() {
                 adapter.updateData(mangas)
             }
             progressBar.visibility = View.GONE
+            if(mangas.isEmpty()){
+                tvNoData.visibility = View.VISIBLE
+                tvNoInternet.visibility = View.GONE
+            }
         })
 
         nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
@@ -128,5 +132,18 @@ class LatestMangaFragment : Fragment() {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(isNetworkAvailable(requireContext())){
+            tvNoInternet.visibility = View.GONE
+            tvNoData.visibility = View.GONE
+        }else{
+            tvNoInternet.visibility = View.VISIBLE
+            tvNoData.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+        }
     }
 }

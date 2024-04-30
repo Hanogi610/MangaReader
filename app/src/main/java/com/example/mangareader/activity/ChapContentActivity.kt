@@ -1,8 +1,10 @@
 package com.example.mangareader.activity
 
-import adapter.BottomSheetRvAdapter
-import adapter.ChapterContentRvAdapter
+import com.example.mangareader.adapter.BottomSheetRvAdapter
+import com.example.mangareader.adapter.ChapterContentRvAdapter
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -45,6 +47,7 @@ class ChapContentActivity : AppCompatActivity() {
     lateinit var chapterListRv : RecyclerView
     lateinit var bottomBar : LinearLayout
     lateinit var chapTitle : String
+    lateinit var tvNoInternet : TextView
     var chapPost = 0
     private val viewModel : ChapContentViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +62,14 @@ class ChapContentActivity : AppCompatActivity() {
 
         chapterImages = ArrayList<String>()
 
-        getChapterImages(chapUrl)
+        if(!isNetworkAvailable(this)){
+            tvNoInternet.visibility = View.VISIBLE
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+        }else{
+            tvNoInternet.visibility = View.GONE
+            getChapterImages(chapUrl)
+        }
+
 
         viewModel.chapContent.observe(this, Observer{
             chapterImages = it
@@ -110,7 +120,11 @@ class ChapContentActivity : AppCompatActivity() {
     private fun chapterListInit() {
         Log.d("ChapContentActivity", "chapterListInit(): ${chapterList.size}")
         if(chapterList.isEmpty()){
-            getChapterList(mangaUrl)
+            if(!isNetworkAvailable(this)){
+                Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+            }else{
+                getChapterList(mangaUrl)
+            }
             viewModel.chapterList.observe(this, Observer{
                 chapterList = it as ArrayList<Chapter>
                 for(i in 0 until chapterList.size){
@@ -190,6 +204,17 @@ class ChapContentActivity : AppCompatActivity() {
         backButton = findViewById(R.id.back_button)
         INSTANCE = AppDatabase.getInstance(this)
         bottomBar = findViewById(R.id.bottomBar)
+        tvNoInternet = findViewById(R.id.tv_no_internet)
+
+        tvNoInternet.setOnClickListener(){
+            if(isNetworkAvailable(this)){
+                tvNoInternet.visibility = View.GONE
+                getChapterImages(chapUrl)
+            }else{
+                tvNoInternet.visibility = View.VISIBLE
+                Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -216,6 +241,8 @@ class ChapContentActivity : AppCompatActivity() {
             }
         })
 
+
+
     }
 
     private fun getChapterList(url : String){
@@ -223,5 +250,11 @@ class ChapContentActivity : AppCompatActivity() {
     }
     private fun getChapterImages(url : String){
         viewModel.getChapterImages(url)
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

@@ -1,7 +1,7 @@
 package com.example.mangareader.fragment
 
 
-import adapter.MangaRankingRvAdapter
+import com.example.mangareader.adapter.MangaRankingRvAdapter
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -48,6 +48,13 @@ class MangaRankingsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.rv_manga_rankings)
         tvNoInternet = view.findViewById(R.id.tv_no_internet)
         progressBar = view.findViewById(R.id.loading_spinner)
+
+        tvNoInternet.setOnClickListener(View.OnClickListener {
+            if (isNetworkAvailable(requireContext())) {
+                tvNoInternet.visibility = View.GONE
+                fetchManga()
+            }
+        })
 
         // Set up your Spinners
         val statusOptions = arrayOf(StatusOption("Weekly", 1), StatusOption("Monthly", 2), StatusOption("All time", 3))

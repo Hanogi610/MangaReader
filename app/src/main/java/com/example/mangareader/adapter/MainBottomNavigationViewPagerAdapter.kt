@@ -1,4 +1,4 @@
-package adapter
+package com.example.mangareader.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

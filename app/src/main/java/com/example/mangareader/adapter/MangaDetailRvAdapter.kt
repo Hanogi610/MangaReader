@@ -1,4 +1,4 @@
-package adapter
+package com.example.mangareader.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
