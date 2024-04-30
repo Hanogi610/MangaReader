@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mangareader.R
-import model.MangaByRank
+import com.example.mangareader.model.MangaByRank
 
 class MangaRankingRvAdapter(
     private val mangas : List<MangaByRank>,

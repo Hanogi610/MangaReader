@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
-import model.Chapter
+import com.example.mangareader.model.Chapter
 
 class BottomSheetRvAdapter(private var chapters: List<Chapter>, private val chapterPost : Int, private val onItemClick : (Chapter, Int) -> Unit): RecyclerView.Adapter<BottomSheetRvAdapter.viewHolder>(){
     class viewHolder(view: View) : RecyclerView.ViewHolder(view) {

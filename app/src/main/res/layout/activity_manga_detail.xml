@@ -22,6 +22,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="80dp"
@@ -45,6 +46,7 @@
                 android:layout_height="150dp"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/manga_cover"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/ic_launcher_background" />
 
@@ -53,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:orientation="vertical"
-                android:paddingLeft="5dp">
+                android:paddingStart="5dp">
 
                 <TextView
                     android:id="@+id/manga_title"
@@ -98,7 +100,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="14dp"
@@ -108,17 +110,17 @@
                 android:id="@+id/manga_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
+                android:layout_alignParentStart="true"
                 android:text="@string/follow" />
 
             <Button
                 android:id="@+id/manga_check_for_updates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:layout_alignParentEnd="true"
                 android:text="@string/check" />
 
-        </LinearLayout>
+        </RelativeLayout>
         <!--    <LinearLayout-->
         <!--        android:layout_width="match_parent"-->
         <!--        android:layout_height="wrap_content"-->
@@ -181,5 +183,32 @@
             android:nestedScrollingEnabled="true" />
 
     </LinearLayout>
+
+    <TextView
+        android:elevation="10dp"
+        android:id="@+id/tv_no_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:foregroundGravity="center"
+        android:text="@string/try_again"
+        android:textColor="#3F51B5"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <View
+        android:elevation="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/no_internet_view"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

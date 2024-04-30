@@ -21,10 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDragHandleView
-import database.AppDatabase
+import com.example.mangareader.database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import model.Chapter
+import com.example.mangareader.model.Chapter
 import java.util.Date
 
 class ChapContentActivity : AppCompatActivity() {

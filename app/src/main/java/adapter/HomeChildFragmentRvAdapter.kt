@@ -8,9 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mangareader.R
-import model.Manga
+import com.example.mangareader.model.Manga
 
-class HomeChildFragmentRvAdapter (private var mangaList: MutableList<Manga>,
+class HomeChildFragmentRvAdapter (private val mangaList: MutableList<Manga>,
                                   private val onItemClick : (Manga) -> Unit
     ) : RecyclerView.Adapter<HomeChildFragmentRvAdapter.HomeChildFragmentViewHolder>() {
     class HomeChildFragmentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -42,7 +42,7 @@ class HomeChildFragmentRvAdapter (private var mangaList: MutableList<Manga>,
     }
 
     fun submitData(mangas : List<Manga>){
-        mangaList = mangas.toMutableList()
+        mangaList.addAll(mangas)
         notifyDataSetChanged()
     }
 

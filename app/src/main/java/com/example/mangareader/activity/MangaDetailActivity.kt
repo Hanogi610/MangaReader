@@ -16,12 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mangareader.R
-import database.AppDatabase
-import dbModel.FavoriteManga
-import dbModel.HistoryManga
+import com.example.mangareader.database.AppDatabase
+import com.example.mangareader.dbModel.FavoriteManga
+import com.example.mangareader.dbModel.HistoryManga
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.example.mangareader.model.Chapter
 import java.util.Date
 
 class MangaDetailActivity : AppCompatActivity() {
@@ -33,7 +34,7 @@ class MangaDetailActivity : AppCompatActivity() {
     lateinit var mangaSynopsis: TextView
     lateinit var mangaViewCount: TextView
     lateinit var mangaChapterCount: TextView
-    lateinit var chapterList: RecyclerView
+    lateinit var chapterListRv: RecyclerView
     lateinit var bg : ImageView
     lateinit var favoriteButton : Button
     lateinit var readNowButton: Button
@@ -41,6 +42,7 @@ class MangaDetailActivity : AppCompatActivity() {
     lateinit var INSTANCE : AppDatabase
     lateinit var mangaInFav : FavoriteManga
     lateinit var mangaInHistory : HistoryManga
+    lateinit var adapter: MangaDetailRvAdapter
     var isExistInFav = 0
     var isExistInHis = 0
     var url : String = ""
@@ -69,7 +71,7 @@ class MangaDetailActivity : AppCompatActivity() {
             mangaGenre.text = mangaDetail.mangaGenre
             mangaViewCount.text = mangaDetail.mangaViewCount
             mangaChapterCount.text = mangaDetail.mangaChapterCount
-            val adapter = MangaDetailRvAdapter(mangaDetail.mangaChapterList!!){ chapter, position ->
+            adapter = MangaDetailRvAdapter(mangaDetail.mangaChapterList){ chapter, position ->
                 val intent = Intent(this@MangaDetailActivity, ChapContentActivity::class.java)
                 intent.putExtra("chapterPost", position)
                 intent.putExtra("mangaUrl", url)
@@ -101,8 +103,8 @@ class MangaDetailActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
-            chapterList.layoutManager = LinearLayoutManager(this@MangaDetailActivity)
-            chapterList.adapter = adapter
+            chapterListRv.layoutManager = LinearLayoutManager(this@MangaDetailActivity)
+            chapterListRv.adapter = adapter
 
             // Set the synopsis with a max line default of 3 and can be extended when clicked
             var isExpanded = false
@@ -122,6 +124,11 @@ class MangaDetailActivity : AppCompatActivity() {
                     isExpanded = true
                 }
             }
+        })
+
+        viewModel.chapterList.observe(this, Observer { chapterList ->
+            adapter.updateData(chapterList, this@MangaDetailActivity)
+            mangaChapterCount.text = chapterList.size.toString() + " chapters"
         })
 
         // Set the onClickListener for the favorite button
@@ -191,6 +198,10 @@ class MangaDetailActivity : AppCompatActivity() {
                 }
             }
         }
+
+        checkButton.setOnClickListener{
+            viewModel.getChapterList(url)
+        }
     }
 
     private fun initialize() {
@@ -202,7 +213,7 @@ class MangaDetailActivity : AppCompatActivity() {
         mangaSynopsis = findViewById(R.id.manga_synopsis)
         mangaViewCount = findViewById(R.id.manga_view_count)
         mangaChapterCount = findViewById(R.id.chapter_count)
-        chapterList = findViewById(R.id.chapter_list)
+        chapterListRv = findViewById(R.id.chapter_list)
         favoriteButton = findViewById(R.id.manga_favorite)
         readNowButton = findViewById(R.id.manga_read)
         checkButton = findViewById(R.id.manga_check_for_updates)

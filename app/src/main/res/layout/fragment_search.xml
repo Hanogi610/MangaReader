@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragment.SearchFragment"
+    tools:context=".fragment.SearchFragment"
     android:layout_marginHorizontal="5dp">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -42,5 +42,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:elevation="4dp"
+        android:id="@+id/tv_no_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="?attr/colorSurface"
+        android:text="@string/try_again"
+        android:padding="5dp"
+        android:textColor="#3F51B5"
+        android:textSize="20sp"
         android:visibility="gone"/>
 </RelativeLayout>

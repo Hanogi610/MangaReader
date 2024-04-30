@@ -3,9 +3,9 @@ package adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import fragment.HistoryFragment
-import fragment.HomeFragment
-import fragment.LibraryFragment
+import com.example.mangareader.fragment.HistoryFragment
+import com.example.mangareader.fragment.HomeFragment
+import com.example.mangareader.fragment.LibraryFragment
 
 class MainBottomNavigationViewPagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {

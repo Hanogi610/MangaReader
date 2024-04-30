@@ -3,10 +3,10 @@ package adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import fragment.LatestMangaFragment
-import fragment.MangaRankingsFragment
-import fragment.MangaTypeFragment
-import fragment.SearchFragment
+import com.example.mangareader.fragment.LatestMangaFragment
+import com.example.mangareader.fragment.MangaRankingsFragment
+import com.example.mangareader.fragment.MangaTypeFragment
+import com.example.mangareader.fragment.SearchFragment
 
 class HomeViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
