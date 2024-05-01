@@ -185,6 +185,7 @@
         android:background="?attr/colorSurface"
         android:gravity="center"
         android:text="@string/try_again"
+        android:visibility="gone"
         android:textColor="#3F51B5"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"

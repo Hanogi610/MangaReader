@@ -1,12 +1,15 @@
 package com.example.mangareader.adapter
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -20,10 +23,38 @@ import com.bumptech.glide.request.target.Target
 import com.example.mangareader.R
 
 class ChapterContentRvAdapter(private val chapterImages: List<String>) : RecyclerView.Adapter<ChapterContentRvAdapter.ChapterContentViewHolder>() {
+    @SuppressLint("ClickableViewAccessibility")
     class ChapterContentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.chapterImage)
         val loadingSpinner: ProgressBar = view.findViewById(R.id.loading_spinner)
         val tvNoInternet: TextView = view.findViewById(R.id.tv_no_internet)
+
+        var scaleFactor = 1f
+        val matrix = Matrix()
+
+        val scaleGestureDetector = ScaleGestureDetector(view.context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                return true // ensure we handle the scale event
+            }
+
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                scaleFactor *= detector.scaleFactor
+                scaleFactor = scaleFactor.coerceIn(0.1f, 5.0f)
+
+                matrix.setScale(scaleFactor, scaleFactor, detector.focusX, detector.focusY)
+                imageView.imageMatrix = matrix
+                return true
+            }
+        })
+
+        init {
+            imageView.setOnTouchListener { _, event ->
+                scaleGestureDetector.onTouchEvent(event)
+                imageView.invalidate()
+                true // consume the touch event
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChapterContentViewHolder {
@@ -108,4 +139,6 @@ class ChapterContentRvAdapter(private val chapterImages: List<String>) : Recycle
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
+
+
 }

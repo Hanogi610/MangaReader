@@ -1,13 +1,16 @@
 package com.example.mangareader.activity
 
+import android.annotation.SuppressLint
 import com.example.mangareader.adapter.BottomSheetRvAdapter
 import com.example.mangareader.adapter.ChapterContentRvAdapter
 import android.content.Context
 import android.content.Intent
+import android.graphics.Matrix
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -28,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.mangareader.model.Chapter
 import java.util.Date
+
 
 class ChapContentActivity : AppCompatActivity() {
 
@@ -223,24 +227,23 @@ class ChapContentActivity : AppCompatActivity() {
             finish()
         }
 
-        imageRv.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                if (e.action == MotionEvent.ACTION_UP) {
-                    if (toolbar.visibility == View.VISIBLE) {
-                        toolbar.visibility = View.GONE
-                    } else {
-                        toolbar.visibility = View.VISIBLE
-                    }
-                    if(bottomBar.visibility == View.VISIBLE){
-                        bottomBar.visibility = View.GONE
-                    }else{
-                        bottomBar.visibility = View.VISIBLE
-                    }
-                }
-                return super.onInterceptTouchEvent(rv, e)
-            }
-        })
-
+//        imageRv.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+//            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+//                if (e.action == MotionEvent.ACTION_UP) {
+//                    if (toolbar.visibility == View.VISIBLE) {
+//                        toolbar.visibility = View.GONE
+//                    } else {
+//                        toolbar.visibility = View.VISIBLE
+//                    }
+//                    if(bottomBar.visibility == View.VISIBLE){
+//                        bottomBar.visibility = View.GONE
+//                    }else{
+//                        bottomBar.visibility = View.VISIBLE
+//                    }
+//                }
+//                return super.onInterceptTouchEvent(rv, e)
+//            }
+//        })
 
 
     }
