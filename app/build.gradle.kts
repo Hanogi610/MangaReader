@@ -55,8 +55,6 @@ dependencies {
     //jsoup
     implementation (libs.jsoup)
 
-    //coil
-    implementation (libs.coil)
 
     //kotlin extra
     implementation (libs.kotlinx.coroutines.core)
@@ -65,18 +63,10 @@ dependencies {
     //glide
     implementation (libs.glide)
 
-    //lifecycle scope
-    implementation (libs.androidx.lifecycle.runtime.ktx)
-
     //room
     implementation (libs.androidx.room.runtime.v242)
     annotationProcessor (libs.androidx.room.compiler)
     kapt(libs.androidx.room.compiler)
-
-    //Gson
-    implementation (libs.gson)
-
-    //
-    implementation (libs.subsampling.scale.image.view)
+    
 
 }

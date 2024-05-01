@@ -8,25 +8,29 @@ import android.view.ScaleGestureDetector
 import androidx.recyclerview.widget.RecyclerView
 
 class ZoomableRecyclerView(context: Context, attrs: AttributeSet) : RecyclerView(context, attrs) {
-    var scaleFactor = 1f
-    val zoomMatrix = Matrix() // renamed from 'matrix' to 'zoomMatrix'
+    private var scaleGestureDetector: ScaleGestureDetector
+    private var scaleFactor = 1.0f
 
-    val scaleGestureDetector = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            return true // ensure we handle the scale event
-        }
-
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            scaleFactor *= detector.scaleFactor
-            scaleFactor = scaleFactor.coerceIn(0.1f, 5.0f)
-
-            zoomMatrix.setScale(scaleFactor, scaleFactor, detector.focusX, detector.focusY) // use 'zoomMatrix' here
-            return true
-        }
-    })
+    init {
+        scaleGestureDetector = ScaleGestureDetector(context, ScaleListener())
+    }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
-        super.onTouchEvent(e)
-        return scaleGestureDetector.onTouchEvent(e)
+        scaleGestureDetector.onTouchEvent(e)
+        return super.onTouchEvent(e)
+    }
+
+    private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            scaleFactor *= detector.scaleFactor ?: 1.0f
+            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f)) // Limit scale factor
+
+            // Apply scale to RecyclerView items
+            scaleX = scaleFactor
+            scaleY = scaleFactor
+            return true
+        }
+
+
     }
 }
