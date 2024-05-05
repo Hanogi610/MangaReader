@@ -10,5 +10,6 @@ data class FavoriteManga(
     val mangaTitle: String,
     val mangaUrl: String,
     val imageUrl : String,
-    val lastAdded: Long
+    val lastAdded: Long,
+    val lastChapter: String
 )

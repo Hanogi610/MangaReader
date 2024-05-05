@@ -1,5 +1,9 @@
 package com.example.mangareader.fragment
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.app.TimePickerDialog
+import android.content.Context
 import com.example.mangareader.adapter.FavMangaRvAdapter
 import android.content.Intent
 import androidx.fragment.app.viewModels
@@ -11,9 +15,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.TimePicker
+import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,12 +30,15 @@ import com.example.mangareader.R
 import com.example.mangareader.activity.MangaDetailActivity
 import com.example.mangareader.database.AppDatabase
 import com.example.mangareader.dbModel.FavoriteManga
+import com.example.mangareader.service.CheckNewChapters
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class LibraryFragment : Fragment() {
 
@@ -44,6 +56,9 @@ class LibraryFragment : Fragment() {
     lateinit var alphabet : TextView
     lateinit var time : TextView
     lateinit var bottomSheetDialog : BottomSheetDialog
+    lateinit var autoUpdateSwitch : SwitchCompat
+    lateinit var customTimeButton : Button
+    lateinit var fab : FloatingActionButton
     private var isAlphabeticalAscending = false
     private var isTimeAscending = false
 
@@ -72,10 +87,87 @@ class LibraryFragment : Fragment() {
         editText = toolbar.findViewById(R.id.searchEditText)
         filter = toolbar.findViewById(R.id.filterButton)
 
+        fab = view.findViewById(R.id.updateFab)
+        fab.setOnClickListener {
+            viewModel.viewModelScope.launch {
+                withContext(Dispatchers.IO){
+                    val mangas = viewModel.mangaList.value ?: listOf()
+                    viewModel.checkForUpdate(mangas, requireContext())
+//                    Toast.makeText(requireContext(), "Checking for updates", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
         bottomSheetDialog = BottomSheetDialog(requireContext())
         bottomSheetDialog.setContentView(R.layout.fav_bottom_sheet_layout)
         alphabet = bottomSheetDialog.findViewById(R.id.alphabetical_order)!!
         time = bottomSheetDialog.findViewById(R.id.time_added)!!
+//        customTimeButton = bottomSheetDialog.findViewById(R.id.customTimeButton)!!
+//        autoUpdateSwitch = bottomSheetDialog.findViewById(R.id.autoUpdateSwitch)!!
+//        lifecycleScope.launch {
+//            autoUpdateSwitch.isChecked = loadSwitchState()
+//        }
+//        autoUpdateSwitch.setOnCheckedChangeListener { _, isChecked ->
+//            saveSwitchState(isChecked)
+//            if (isChecked) {
+//                // Schedule the CheckNewChapters service
+//                val intent = Intent(context, CheckNewChapters::class.java)
+//                val pendingIntent = PendingIntent.getService(context, 0, intent,  PendingIntent.FLAG_UPDATE_CURRENT)
+//                val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//
+//                // Set the alarm to start at a specific time
+//                val calendar: Calendar = Calendar.getInstance().apply {
+//                    timeInMillis = System.currentTimeMillis()
+//                    set(Calendar.HOUR_OF_DAY, 7) // For example, the service will start at 7 AM
+//                }
+//
+//                // Set the alarm to repeat daily
+//                alarmManager.setInexactRepeating(
+//                    AlarmManager.RTC_WAKEUP,
+//                    calendar.timeInMillis,
+//                    AlarmManager.INTERVAL_DAY,
+//                    pendingIntent
+//                )
+//            } else {
+//                // Cancel the CheckNewChapters service
+//                val intent = Intent(context, CheckNewChapters::class.java)
+//                val pendingIntent = PendingIntent.getService(context, 0, intent,  PendingIntent.FLAG_UPDATE_CURRENT)
+//                val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//                alarmManager.cancel(pendingIntent)
+//            }
+//        }
+//        customTimeButton.setOnClickListener {
+//            // Create a new instance of TimePickerDialog and return it
+//            val c = Calendar.getInstance()
+//            val hour = c.get(Calendar.HOUR_OF_DAY)
+//            val minute = c.get(Calendar.MINUTE)
+//
+//            val timePickerDialog = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
+//                // Set the alarm to start at the selected time
+//                val calendar: Calendar = Calendar.getInstance().apply {
+//                    timeInMillis = System.currentTimeMillis()
+//                    set(Calendar.HOUR_OF_DAY, selectedHour)
+//                    set(Calendar.MINUTE, selectedMinute)
+//                }
+//
+//                // Schedule the CheckNewChapters service
+//                val intent = Intent(context, CheckNewChapters::class.java)
+//                val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//                val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//
+//                // Set the alarm to repeat daily
+//                alarmManager.setInexactRepeating(
+//                    AlarmManager.RTC_WAKEUP,
+//                    calendar.timeInMillis,
+//                    AlarmManager.INTERVAL_DAY,
+//                    pendingIntent
+//                )
+//
+//                Toast.makeText(context, "Check new chapters scheduled at $selectedHour:$selectedMinute", Toast.LENGTH_SHORT).show()
+//            }, hour, minute, true)
+//
+//            timePickerDialog.show()
+//        }
         time.isSelected = true
         filter.setOnClickListener {
             bottomSheetDialog.show()
@@ -133,8 +225,6 @@ class LibraryFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-
-
         rv = view.findViewById(R.id.libraryRv)
         rv.layoutManager = LinearLayoutManager(requireContext())
         viewModel.mangaList.observe(viewLifecycleOwner, Observer {mangas ->
@@ -166,5 +256,16 @@ class LibraryFragment : Fragment() {
         super.onResume()
         // Fetch the latest data from the database
         viewModel.getMangas(requireContext())
+    }
+
+    private fun saveSwitchState(state: Boolean) {
+        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("autoUpdateSwitch", state)
+        editor.apply()
+    }
+    private suspend fun loadSwitchState(): Boolean = withContext(Dispatchers.IO) {
+        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+        sharedPreferences.getBoolean("autoUpdateSwitch", false)
     }
 }

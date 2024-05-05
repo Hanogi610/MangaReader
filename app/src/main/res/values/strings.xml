@@ -27,4 +27,7 @@
     <string name="alphabetical_order">Alphabetical Order</string>
     <string name="time_added">Time Added</string>
     <string name="manga_reader">Manga Reader</string>
+    <string name="update">update</string>
+    <string name="auto_check_for_updates">Auto check for updates</string>
+    <string name="time_to_update">Time to update</string>
 </resources>

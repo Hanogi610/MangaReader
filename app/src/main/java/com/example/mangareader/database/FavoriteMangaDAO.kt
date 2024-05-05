@@ -17,4 +17,7 @@ interface FavoriteMangaDAO {
     @Query("SELECT * FROM favorite")
     fun getAllFavoriteManga(): List<FavoriteManga>
 
+    @Query("UPDATE favorite SET lastChapter = :lastChapter WHERE mangaUrl = :mangaUrl")
+    fun updateLastChapter(mangaUrl: String, lastChapter: String)
+
 }

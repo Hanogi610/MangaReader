@@ -167,7 +167,7 @@ class MangaDetailActivity : AppCompatActivity() {
                 }
             }else{
                 viewModel.mangaDetail.value?.let { mangaDetail ->
-                    mangaInFav = FavoriteManga(0, mangaDetail.mangaTitle!!, mangaDetail.mangaUrl!!, mangaDetail.mangaCover!!, Date().time)
+                    mangaInFav = FavoriteManga(0, mangaDetail.mangaTitle, mangaDetail.mangaUrl, mangaDetail.mangaCover, Date().time, mangaDetail.mangaChapterList.first().chapterUrl)
                     // Perform database operation in a coroutine
                     viewModel.viewModelScope.launch {
                         withContext(Dispatchers.IO) {
