@@ -23,4 +23,7 @@
     <string name="try_again">Try again...</string>
     <string name="manga_cover">Manga cover</string>
     <string name="network_error">Network Error</string>
+    <string name="filter">Filter</string>
+    <string name="alphabetical_order">Alphabetical Order</string>
+    <string name="time_added">Time Added</string>
 </resources>

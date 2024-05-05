@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.mangareader.R
 import com.example.mangareader.dbModel.FavoriteManga
 
-class FavMangaRvAdapter(private val mangas : List<FavoriteManga>,
+class FavMangaRvAdapter(private var mangas : List<FavoriteManga>,
                         private val onItemClick : (FavoriteManga)->Unit,
                         private val onItemButtonClick : (FavoriteManga)->Unit
     ) : RecyclerView.Adapter<FavMangaRvAdapter.viewHolder>(){
@@ -41,5 +41,10 @@ class FavMangaRvAdapter(private val mangas : List<FavoriteManga>,
         holder.itemView.setOnClickListener(){
             onItemClick(manga)
         }
+    }
+
+    fun updateList(newMangas: List<FavoriteManga>) {
+        this.mangas = newMangas
+        notifyDataSetChanged()
     }
 }
