@@ -9,6 +9,7 @@ import android.graphics.Matrix
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -30,6 +31,7 @@ import com.example.mangareader.database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.mangareader.model.Chapter
+import com.google.android.material.appbar.MaterialToolbar
 import java.util.Date
 
 
@@ -52,6 +54,7 @@ class ChapContentActivity : AppCompatActivity() {
     lateinit var bottomBar : LinearLayout
     lateinit var chapTitle : String
     lateinit var tvNoInternet : TextView
+    lateinit var toolbar : MaterialToolbar
     var chapPost = 0
     private val viewModel : ChapContentViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -220,34 +223,57 @@ class ChapContentActivity : AppCompatActivity() {
             }
         }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
         backButton.setOnClickListener(){
             finish()
         }
 
-//        imageRv.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
-//            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-//                if (e.action == MotionEvent.ACTION_UP) {
-//                    if (toolbar.visibility == View.VISIBLE) {
-//                        toolbar.visibility = View.GONE
-//                    } else {
-//                        toolbar.visibility = View.VISIBLE
-//                    }
-//                    if(bottomBar.visibility == View.VISIBLE){
-//                        bottomBar.visibility = View.GONE
-//                    }else{
-//                        bottomBar.visibility = View.VISIBLE
-//                    }
-//                }
-//                return super.onInterceptTouchEvent(rv, e)
-//            }
-//        })
+        val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
 
+            override fun onDown(e: MotionEvent): Boolean {
+                return super.onDown(e)
+            }
+
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
+                toggleBarsVisibility()
+                return true
+            }
+
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                if (imageRv.scaleX == 1f) {
+                    // Zoom in to fit the screen
+                    imageRv.scaleX = 2f
+                    imageRv.scaleY = 2f
+                } else {
+                    // Zoom out to original size
+                    imageRv.scaleX = 1f
+                    imageRv.scaleY = 1f
+                }
+                return super.onDoubleTap(e)
+            }
+        })
+        imageRv.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                return gestureDetector.onTouchEvent(e)
+            }
+        })
 
     }
 
+    private fun toggleBarsVisibility() {
+        if (toolbar.visibility == View.VISIBLE) {
+            toolbar.visibility = View.GONE
+        } else {
+            toolbar.visibility = View.VISIBLE
+        }
+        if (bottomBar.visibility == View.VISIBLE) {
+            bottomBar.visibility = View.GONE
+        } else {
+            bottomBar.visibility = View.VISIBLE
+        }
+    }
     private fun getChapterList(url : String){
         viewModel.getChapterList(url)
     }

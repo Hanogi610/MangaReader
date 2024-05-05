@@ -56,12 +56,7 @@ class ChapterContentRvAdapter(private val chapterImages: List<String>) : Recycle
                     dataSource: com.bumptech.glide.load.DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    val width = resource.width
-                    val height = resource.height
-                    Log.d("ImageSize", "Width: $width, Height: $height")
 
-                    val displayMetrics = holder.imageView.context.resources.displayMetrics
-                    val screenWidth = displayMetrics.widthPixels
 
                     (holder.imageView.context as Activity).runOnUiThread {
 
