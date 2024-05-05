@@ -126,6 +126,9 @@ class MangaDetailActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
+            if(isExistInFav == 1){
+                AppDatabase.getInstance(applicationContext).favoriteMangaDAO().updateLastChapter(mangaInFav.mangaUrl,mangaDetail.mangaChapterList.last().chapterUrl)
+            }
             chapterListRv.layoutManager = LinearLayoutManager(this@MangaDetailActivity)
             chapterListRv.adapter = adapter
 
