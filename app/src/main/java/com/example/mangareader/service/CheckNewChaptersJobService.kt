@@ -3,12 +3,11 @@ package com.example.mangareader.service
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
+import android.app.job.JobParameters
+import android.app.job.JobService
 import android.content.Context
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
 import com.example.mangareader.R
@@ -17,20 +16,15 @@ import com.example.mangareader.scraper.AsuraJsoup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.Date
 
-class CheckNewChapters : Service() {
+class CheckNewChaptersJobService : JobService() {
     companion object {
         private const val PROGRESS_NOTIFICATION_ID = 1
     }
-    override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
-    }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("CheckNewChapters", "Service started")
-        startForeground(PROGRESS_NOTIFICATION_ID, createForegroundNotification())
+    override fun onStartJob(params: JobParameters): Boolean {
+        Log.d("CheckNewChapters", "Job started")
         CoroutineScope(Dispatchers.IO).launch {
             val scraper = AsuraJsoup()
             val db = AppDatabase.getInstance(applicationContext)
@@ -50,9 +44,8 @@ class CheckNewChapters : Service() {
                     sendNotification(applicationContext, "${manga.mangaTitle} has $newChapters new chapters")
                     db.favoriteMangaDAO().updateLastChapter(manga.mangaUrl, chapters.last().chapterUrl)
                 }else{
-                    sendNotification(applicationContext, "${manga.mangaTitle} has no new chapters")
+                    //sendNotification(applicationContext, "${manga.mangaTitle} has no new chapters")
                 }
-
                 // Calculate progress as a percentage
                 val progress = ((index + 1).toDouble() / mangaList.size.toDouble() * 100).toInt()
 
@@ -60,14 +53,12 @@ class CheckNewChapters : Service() {
                 sendNotificationWithProgressbar(applicationContext, progress)
             }
         }
-        return START_STICKY
+        return false
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Clean up if necessary
+    override fun onStopJob(params: JobParameters): Boolean {
+        return false
     }
-
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "MangaReader Check New Chapters Channel"
@@ -87,8 +78,13 @@ class CheckNewChapters : Service() {
 
         // Create RemoteViews for custom notification layout
         val notificationLayout = RemoteViews(context.packageName, R.layout.notification_layout)
-        notificationLayout.setTextViewText(R.id.notification_title, "New chapters check")
-        notificationLayout.setTextViewText(R.id.notification_content, "Downloading chapters...")
+        if(progress != 100) {
+            notificationLayout.setTextViewText(R.id.notification_title, "New chapters check")
+            notificationLayout.setTextViewText(R.id.notification_content, "Checking for new chapters...")
+        }else{
+            notificationLayout.setTextViewText(R.id.notification_title, "New chapters check done")
+            notificationLayout.setTextViewText(R.id.notification_content, "Checking for new chapters done!")
+        }
 
         // Set progress to progress bar
         notificationLayout.setProgressBar(R.id.notification_progress, 100, progress, false)
@@ -107,7 +103,9 @@ class CheckNewChapters : Service() {
 
         // Notify using NotificationManager
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(PROGRESS_NOTIFICATION_ID, builtNotification)
+        notificationManager.notify(CheckNewChaptersJobService.PROGRESS_NOTIFICATION_ID, builtNotification)
+
+
     }
 
     private fun sendNotification(context: Context, s : String){
@@ -130,19 +128,4 @@ class CheckNewChapters : Service() {
     private fun getNotificationId(): Int{
         return Date().time.toInt()
     }
-
-    private fun createForegroundNotification(): Notification {
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.manga_icon)
-        val notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(this, "MangaReader")
-        } else {
-            Notification.Builder(this)
-        }
-        return notification.setContentTitle("Checking new chapters")
-            .setContentText("Checking for new chapters...")
-            .setSmallIcon(R.drawable.ic_notification)
-            .setLargeIcon(bitmap)
-            .build()
-    }
-
 }

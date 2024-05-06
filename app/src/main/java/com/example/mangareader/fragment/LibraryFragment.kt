@@ -1,8 +1,9 @@
 package com.example.mangareader.fragment
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
 import android.content.Context
 import com.example.mangareader.adapter.FavMangaRvAdapter
 import android.content.Intent
@@ -29,8 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mangareader.R
 import com.example.mangareader.activity.MangaDetailActivity
 import com.example.mangareader.database.AppDatabase
-import com.example.mangareader.dbModel.FavoriteManga
-import com.example.mangareader.service.CheckNewChapters
+import com.example.mangareader.service.CheckNewChaptersJobService
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -61,6 +61,8 @@ class LibraryFragment : Fragment() {
     lateinit var fab : FloatingActionButton
     private var isAlphabeticalAscending = false
     private var isTimeAscending = false
+    private var switchStateLoaded = false
+    private var isJobScheduled = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +95,6 @@ class LibraryFragment : Fragment() {
                 withContext(Dispatchers.IO){
                     val mangas = viewModel.mangaList.value ?: listOf()
                     viewModel.checkForUpdate(mangas, requireContext())
-//                    Toast.makeText(requireContext(), "Checking for updates", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -102,72 +103,65 @@ class LibraryFragment : Fragment() {
         bottomSheetDialog.setContentView(R.layout.fav_bottom_sheet_layout)
         alphabet = bottomSheetDialog.findViewById(R.id.alphabetical_order)!!
         time = bottomSheetDialog.findViewById(R.id.time_added)!!
-//        customTimeButton = bottomSheetDialog.findViewById(R.id.customTimeButton)!!
-//        autoUpdateSwitch = bottomSheetDialog.findViewById(R.id.autoUpdateSwitch)!!
-//        lifecycleScope.launch {
-//            autoUpdateSwitch.isChecked = loadSwitchState()
-//        }
-//        autoUpdateSwitch.setOnCheckedChangeListener { _, isChecked ->
-//            saveSwitchState(isChecked)
-//            if (isChecked) {
-//                // Schedule the CheckNewChapters service
-//                val intent = Intent(context, CheckNewChapters::class.java)
-//                val pendingIntent = PendingIntent.getService(context, 0, intent,  PendingIntent.FLAG_UPDATE_CURRENT)
-//                val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//
-//                // Set the alarm to start at a specific time
-//                val calendar: Calendar = Calendar.getInstance().apply {
-//                    timeInMillis = System.currentTimeMillis()
-//                    set(Calendar.HOUR_OF_DAY, 7) // For example, the service will start at 7 AM
-//                }
-//
-//                // Set the alarm to repeat daily
-//                alarmManager.setInexactRepeating(
-//                    AlarmManager.RTC_WAKEUP,
-//                    calendar.timeInMillis,
-//                    AlarmManager.INTERVAL_DAY,
-//                    pendingIntent
-//                )
-//            } else {
-//                // Cancel the CheckNewChapters service
-//                val intent = Intent(context, CheckNewChapters::class.java)
-//                val pendingIntent = PendingIntent.getService(context, 0, intent,  PendingIntent.FLAG_UPDATE_CURRENT)
-//                val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//                alarmManager.cancel(pendingIntent)
-//            }
-//        }
-//        customTimeButton.setOnClickListener {
-//            // Create a new instance of TimePickerDialog and return it
-//            val c = Calendar.getInstance()
-//            val hour = c.get(Calendar.HOUR_OF_DAY)
-//            val minute = c.get(Calendar.MINUTE)
-//
-//            val timePickerDialog = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
-//                // Set the alarm to start at the selected time
-//                val calendar: Calendar = Calendar.getInstance().apply {
-//                    timeInMillis = System.currentTimeMillis()
-//                    set(Calendar.HOUR_OF_DAY, selectedHour)
-//                    set(Calendar.MINUTE, selectedMinute)
-//                }
-//
-//                // Schedule the CheckNewChapters service
-//                val intent = Intent(context, CheckNewChapters::class.java)
-//                val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//                val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//
-//                // Set the alarm to repeat daily
-//                alarmManager.setInexactRepeating(
-//                    AlarmManager.RTC_WAKEUP,
-//                    calendar.timeInMillis,
-//                    AlarmManager.INTERVAL_DAY,
-//                    pendingIntent
-//                )
-//
-//                Toast.makeText(context, "Check new chapters scheduled at $selectedHour:$selectedMinute", Toast.LENGTH_SHORT).show()
-//            }, hour, minute, true)
-//
-//            timePickerDialog.show()
-//        }
+        customTimeButton = bottomSheetDialog.findViewById(R.id.customTimeButton)!!
+        autoUpdateSwitch = bottomSheetDialog.findViewById(R.id.autoUpdateSwitch)!!
+
+        if (!switchStateLoaded) {
+            lifecycleScope.launch {
+                autoUpdateSwitch.isChecked = loadSwitchState()
+                isJobScheduled = loadSwitchState()
+                switchStateLoaded = true
+            }
+        }
+
+        // Set the listener for the autoUpdateSwitch
+        autoUpdateSwitch.setOnCheckedChangeListener { _, isChecked ->
+            // Save the switch state
+            saveSwitchState(isChecked)
+
+            if (isChecked && !isJobScheduled) {
+                // Schedule the CheckNewChaptersJobService if the switch is turned on and the job is not already scheduled
+                scheduleJobService()
+                isJobScheduled = true
+            } else if (!isChecked && isJobScheduled) {
+                // Cancel the CheckNewChaptersJobService if the switch is turned off and the job is currently scheduled
+                cancelJobService()
+                isJobScheduled = false
+            }
+        }
+
+        customTimeButton.setOnClickListener {
+            // Create a new instance of TimePickerDialog and return it
+            val c = Calendar.getInstance()
+            val hour = c.get(Calendar.HOUR_OF_DAY)
+            val minute = c.get(Calendar.MINUTE)
+
+            val timePickerDialog = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
+                // Set the job to start at the selected time
+                val calendar: Calendar = Calendar.getInstance().apply {
+                    timeInMillis = System.currentTimeMillis()
+                    set(Calendar.HOUR_OF_DAY, selectedHour)
+                    set(Calendar.MINUTE, selectedMinute)
+                }
+
+                // Schedule the CheckNewChaptersJobService
+                val jobScheduler = context?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                val jobInfo = JobInfo.Builder(1, ComponentName(requireContext(), CheckNewChaptersJobService::class.java))
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // Run this job when any network is available
+                    .setPersisted(true) // Persist this job across device reboots
+                    .setMinimumLatency(calendar.timeInMillis - System.currentTimeMillis()) // Set the minimum delay
+                    .build()
+
+                jobScheduler.schedule(jobInfo)
+
+                Toast.makeText(context, "Check new chapters scheduled at $selectedHour:$selectedMinute", Toast.LENGTH_SHORT).show()
+                Log.d("LibraryFragment", "Check new chapters scheduled at $selectedHour:$selectedMinute")
+            }, hour, minute, true)
+
+            timePickerDialog.show()
+        }
+
+// ...
         time.isSelected = true
         filter.setOnClickListener {
             bottomSheetDialog.show()
@@ -267,5 +261,19 @@ class LibraryFragment : Fragment() {
     private suspend fun loadSwitchState(): Boolean = withContext(Dispatchers.IO) {
         val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
         sharedPreferences.getBoolean("autoUpdateSwitch", false)
+    }
+    private fun scheduleJobService() {
+        val jobScheduler = context?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val jobInfo = JobInfo.Builder(1, ComponentName(requireContext(), CheckNewChaptersJobService::class.java))
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // Run this job when any network is available
+            .setPersisted(true) // Persist this job across device reboots
+            .build()
+
+        jobScheduler.schedule(jobInfo)
+    }
+
+    private fun cancelJobService() {
+        val jobScheduler = context?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        jobScheduler.cancel(1)
     }
 }
